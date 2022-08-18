@@ -28,6 +28,13 @@ def augment(img):
     imgDilation = cv.dilate(imgThresh, kernel, iterations=1)  # apply dilation to amplify threshold result
     return imgDilation
 
+def crop_bat(img, x, y, area):
+    x1, x2, y1, y2 = int(x - area), int(x + area), int(y - area), int(y + area)
+    
+    bat_crop = img[x1: x2, y1: y2]
+    cv.imshow("bat", bat_crop)
+    cv.waitKey(0)
+    
 def find_bats(allImgs):
     totalBats = 0
     batDepthMin = 50
@@ -44,13 +51,19 @@ def find_bats(allImgs):
         for blob in blobs:
             if batDepthMin < cv.contourArea(blob) < batDepthMax:  # Only process blobs with a min / max size
                 bats.append(blob)
-                # Circle drawing maths shit
+
+                # Find center x and center y cord for each bat
                 M = cv.moments(blob)
                 cx = int(M["m10"] / M["m00"])
                 cy = int(M["m01"] / M["m00"])
                 bat_cords = (cx, cy)
+
+                # crop bat from image
+                crop_bat(img[0], cx, cy, cv.contourArea(blob))
+                
                 bat_location.append((blob, bat_cords))
 
         totalBats += len(bats)
         cv.drawContours(img[0], bats, -1, (0, 255, 255), 1)  # Draw bat contours on img
     return allImgs, totalBats, bat_location
+
