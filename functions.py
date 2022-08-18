@@ -42,9 +42,6 @@ def find_bats(allImgs):
     bat_location = []
     for img in allImgs:
         blobs = cv.findContours(img[1], cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)[-2]  # Find bats using cv.findContours
-
-        # Bat depth!
-
         bats = []
 
         # Process the blobs
@@ -52,18 +49,14 @@ def find_bats(allImgs):
             if batDepthMin < cv.contourArea(blob) < batDepthMax:  # Only process blobs with a min / max size
                 bats.append(blob)
 
-                # Find center x and center y cord for each bat
-                M = cv.moments(blob)
-                cx = int(M["m10"] / M["m00"])
-                cy = int(M["m01"] / M["m00"])
-                bat_cords = (cx, cy)
-
+                rect = cv.minAreaRect(blob)
+                box = cv.boxPoints(rect)
+                box = np.int0(box)
                 # crop bat from image
-                crop_bat(img[0], cx, cy, cv.contourArea(blob))
-                
-                bat_location.append((blob, bat_cords))
+                # crop_bat(img[0], cx, cy, cv.contourArea(blob))
+                # bat_location.append((blob, bat_cords))
+                cv.drawContours(img[0], [box], 0, (0, 0, 255), 2)  # Draw bat contours on img
 
         totalBats += len(bats)
-        cv.drawContours(img[0], bats, -1, (0, 255, 255), 1)  # Draw bat contours on img
     return allImgs, totalBats, bat_location
 

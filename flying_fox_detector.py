@@ -11,8 +11,6 @@ allImgs = chop_img(img, 3)
 # For each image, use cv.findcontours on threshed img and cv.drawcontours on original image
 allImgs, totalBats, bat_cords = find_bats(allImgs)
 
-print(bat_cords[1][1])
-
 # Concatonate the marked images back together
 img_row_1 = cv.hconcat([allImgs[0][0],allImgs[1][0],allImgs[2][0]])
 img_row_2 = cv.hconcat([allImgs[3][0],allImgs[4][0],allImgs[5][0]])
