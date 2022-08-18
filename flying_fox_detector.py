@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 from functions import augment, chop_img, find_bats
 
-img_num = "0091"
+img_num = "0137"
 img = cv.imread(r"C:\Users\jonathan\Evolve Technology\Evolve Technologies Team Site - Client Info\Ecosure\4. Projects\Project Flying Fox - Sample Data\PR5902 Hillview Station Apr 2022\Raw Data M2EA 270422\Ortho Runs\40M\Thermal\DJI_{}_T.JPG".format(img_num))
 print(img.shape)
 # list of tuples that store each cropped image in its original format and threshed format (original, threshed)

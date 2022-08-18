@@ -58,5 +58,7 @@ def find_bats(allImgs):
                 cv.drawContours(img[0], [box], 0, (0, 0, 255), 2)  # Draw bat contours on img
 
         totalBats += len(bats)
+        cv.imshow("cropped img", img[0])
+        cv.waitKey(0)
     return allImgs, totalBats, bat_location
 
