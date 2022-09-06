@@ -3,7 +3,7 @@ import numpy as np
 from functions import augment, chop_img, find_bats
 
 img_nums = ["0265", "0794", "0217"]
-img_num = img_nums[2]
+img_num = img_nums[1]
 img = cv.imread(r"C:\Users\jonathan\Evolve Technology\Evolve Technologies Team Site - Client Info\Ecosure\4. Projects\Project Flying Fox - Sample Data\PR5902 Hillview Station Apr 2022\Raw Data M2EA 270422\Ortho Runs\40M\Thermal\DJI_{}_T.JPG".format(img_num))
 print(img.shape)
 # list of tuples that store each cropped image in its original format and threshed format (original, threshed)
@@ -26,4 +26,6 @@ cv.putText(img_concat, text, (350, 750), cv.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0)
 
 print("Total number of bats = {}".format(totalBats))
 cv.imshow("img", img_concat)
+img = cv.resize(img, (960, 768))
+cv.imshow("original", img)
 cv.waitKey(0)
