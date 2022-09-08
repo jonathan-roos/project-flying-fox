@@ -28,10 +28,10 @@ def augment(img):
     imgDilation = cv.dilate(imgThresh, kernel, iterations=1)  # apply dilation to amplify threshold result
     return imgDilation
 
-def crop_bat(img, x, y, area):
-    x1, x2, y1, y2 = int(x - area), int(x + area), int(y - area), int(y + area)
-    
+def crop_bat(img, center_x, center_y, area):
+    x1, x2, y1, y2 = int(center_x - area), int(center_x + area), int(center_y - area), int(center_y + area)
     bat_crop = img[x1: x2, y1: y2]
+
     cv.imshow("bat", bat_crop)
     cv.waitKey(0)
     
@@ -52,13 +52,17 @@ def find_bats(allImgs):
                 rect = cv.minAreaRect(blob)
                 box = cv.boxPoints(rect)
                 box = np.int0(box)
+                M = cv.moments(blob)
+                cx = int(M["m10"] / M["m00"])
+                cy = int(M["m01"] / M["m00"])
+                bat_cords = (cx, cy)
                 # crop bat from image
-                # crop_bat(img[0], cx, cy, cv.contourArea(blob))
-                # bat_location.append((blob, bat_cords))
+                crop_bat(img[0], cx, cy, cv.contourArea(blob))
+                bat_location.append((blob, bat_cords))
                 cv.drawContours(img[0], [box], 0, (0, 0, 255), 1)  # Draw bat contours on img
 
         totalBats += len(bats)
-        # cv.imshow("cropped img", img[0])
-        # cv.waitKey(0)
+        cv.imshow("cropped img", img[0])
+        cv.waitKey(0)
     return allImgs, totalBats, bat_location
 
