@@ -28,21 +28,32 @@ def augment(img):
     imgDilation = cv.dilate(imgThresh, kernel, iterations=1)  # apply dilation to amplify threshold result
     return imgDilation
 
-def crop_bat(img, center_x, center_y):
-    area = 25
-    x1, x2, y1, y2 = int(center_x - area), int(center_x + area), int(center_y - area), int(center_y + area)
-    print(x1, x2, y1, y2,img.shape[0],img.shape[1])
+# def crop_bat(img, center_x, center_y):
+#     area = 25
 
-    if x1 < 0 : x1 = 0
-    if x1 > img.shape[0]:x1 = img.shape[0]-(x1 - img.shape[0])
-    if x2 < 0 : x2 = 0
-    if x2 > img.shape[0]:x2 = img.shape[0] - (x2 - img.shape[0])
-    if y1 < 0 : y1 = 0
-    if y1 > img.shape[1]:y1 = img.shape[1]
-    if y2 < 0 : y2 = 0
-    if y2 > img.shape[1]:y2 = img.shape[1]
+#     # if center_x - area >= 0 and center_x + area 
+#     x1, x2, y1, y2 = int(center_x - area), int(center_x + area), int(center_y - area), int(center_y + area)
+#     print(x1, x2, y1, y2,img.shape[0],img.shape[1])
+
+#     if x1 < 0 : x1 = 0
+#     if x1 > img.shape[0]:x1 = img.shape[0]-(x1 - img.shape[0])
+#     if x2 < 0 : x2 = 0
+#     if x2 > img.shape[0]:x2 = img.shape[0] - (x2 - img.shape[0])
+#     if y1 < 0 : y1 = 0
+#     if y1 > img.shape[1]:y1 = img.shape[1]
+#     if y2 < 0 : y2 = 0
+#     if y2 > img.shape[1]:y2 = img.shape[1]
    
-    print(x1, x2, y1, y2,img.shape[0],img.shape[1])
+#     print(x1, x2, y1, y2,img.shape[0],img.shape[1])
+#     bat_crop = img[x1: x2, y1: y2]
+#     return bat_crop
+
+def crop_bat(img, box):
+    print(box[0][0], box[0][1])
+    y1 = box[0][0]
+    x1 = box[0][1]
+    y2 = box[2][0]
+    x2 = box[2][1]
     bat_crop = img[x1: x2, y1: y2]
     return bat_crop
     
@@ -55,13 +66,12 @@ def find_bats(allImgs):
 
     for img in allImgs:
         blobs = cv.findContours(img[1], cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)[-2]  # Find bats using cv.findContours
-
         # Process the blobs
         for blob in blobs:
-            blobNum = 0
             if batDepthMin < cv.contourArea(blob) < batDepthMax:  # Only process blobs with a min / max size
                 rect = cv.minAreaRect(blob)
                 box = cv.boxPoints(rect)
+                print(box)
                 box = np.int0(box)
                 M = cv.moments(blob)
                 cx = int(M["m10"] / M["m00"])
@@ -70,13 +80,13 @@ def find_bats(allImgs):
                 bats.append(bat_cords)
                 # crop bat from image
                 cv.drawContours(img[0], [box], 0, (0, 0, 255), 1)  # Drawing on image before cropping to see bats
-                cropped_bat = crop_bat(img[0], cx, cy)
-                if blobNum < 10:
-                    cv.imshow("cropped bat {}".format(blobNum), cropped_bat)
-                    cv.waitKey(0)
+                # cropped_bat = crop_bat(img[0], cx, cy)
+                cropped_bat = crop_bat(img[0], box)
+                cv.imshow("img", img[0])
+                cv.imshow("cropped bat", cropped_bat)
+                cv.waitKey(0)
                 cropped_bats.append((cropped_bat, bat_cords))
                 # cv.drawContours(img[0], [box], 0, (0, 0, 255), 1)  # Draw bat contours on img
-            blobNum += 1
 
     totalBats += len(bats)
         
