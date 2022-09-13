@@ -72,15 +72,12 @@ def find_bats(allImgs):
                 cropped_bat = crop_bat(img[0], box)
                 cropped_bats.append((cropped_bat, bat_cords))
 
-                cv.drawContours(img[0], [box], 0, (0, 0, 255), 1)  # Draw bat contours on img original
-                cv.drawContours(img[1], [box], 0, (0, 0, 255), 1)  # Draw bat contours on img aug
+                # cv.drawContours(img[0], [box], 0, (0, 0, 255), 1)  # Draw bat contours on img original
 
-                cv.imshow("img original", img[0])
-                cv.imshow("img aug", img[1])
+                # cv.imshow("img original", img[0])
 
-                cv.imshow("cropped bat", cropped_bat)
-                cv.waitKey(0)
-                # cv.drawContours(img[0], [box], 0, (0, 0, 255), 1)  # Draw bat contours on img
+                # cv.imshow("cropped bat", cropped_bat)
+                # cv.waitKey(0)
 
     totalBats += len(bats)
         

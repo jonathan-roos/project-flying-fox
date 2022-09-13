@@ -1,5 +1,6 @@
 import cv2 as cv
 import numpy as np
+import keyboard
 from functions import augment, chop_img, find_bats
 
 img_nums = ["0265", "0794", "0217"]
@@ -13,10 +14,18 @@ allImgs = chop_img(img, 3)
 allImgs, totalBats, cropped_bats = find_bats(allImgs)
 
 # Save cropped bats to file
-for i in range(50):
-    image = cropped_bats[100+i][0]
-    path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\bat{}.png".format(i)
-    cv.imwrite(path, image)
+for i in range(20):
+    bat = cropped_bats[100+i][0]
+    cv.imshow("cropped bat {}".format(i), bat)
+    path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\bat\bat{}.png".format(i)
+
+    if keyboard.is_pressed('y'):
+        path = path
+    if keyboard.is_pressed('n'):
+        path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\!bat\bat{}.png".format(i)
+
+    cv.waitKey(0)
+    cv.imwrite(path, bat)
     
 # Concatonate the marked images back together
 img_row_1 = cv.hconcat([allImgs[0][0],allImgs[1][0],allImgs[2][0]])
@@ -31,4 +40,4 @@ print("Total number of bats = {}".format(totalBats))
 cv.imshow("img", img_concat)
 cv.waitKey(0)
 
-              
+               
