@@ -3,7 +3,7 @@ import numpy as np
 from functions import augment, chop_img, find_bats
 
 img_nums = ["0265", "0794", "0217"]
-img_num = img_nums[2]
+img_num = img_nums[1]
 img = cv.imread(r"C:\Users\jonathan\Evolve Technology\Evolve Technologies Team Site - Client Info\Ecosure\4. Projects\Project Flying Fox - Sample Data\PR5902 Hillview Station Apr 2022\Raw Data M2EA 270422\Ortho Runs\40M\Thermal\DJI_{}_T.JPG".format(img_num))
 print(img.shape)   
 # list of tuples that store each cropped image in its original format and threshed format (original, threshed)
@@ -18,7 +18,6 @@ for i in range(50):
     path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\bat{}.png".format(i)
     cv.imwrite(path, image)
     
-
 # Concatonate the marked images back together
 img_row_1 = cv.hconcat([allImgs[0][0],allImgs[1][0],allImgs[2][0]])
 img_row_2 = cv.hconcat([allImgs[3][0],allImgs[4][0],allImgs[5][0]])
