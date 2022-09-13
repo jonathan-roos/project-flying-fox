@@ -28,12 +28,31 @@ def augment(img):
     imgDilation = cv.dilate(imgThresh, kernel, iterations=1)  # apply dilation to amplify threshold result
     return imgDilation
 
+# def crop_bat(img, box):
+#     y1 = int((box[0][0]) * 0.975)
+#     x1 = int((box[0][1]) * 0.975)
+#     y2 = int((box[2][0]) * 1.025)
+#     x2 = int((box[2][1]) * 1.025)
+#     bat_crop = img[x1: x2, y1: y2]
+
+#     print(box)
+#     print(x1, y1, x2, y2)
+#     print(bat_crop.shape)
+#     # bat_crop = cv.resize(bat_crop, (bat_crop.shape[0]*10, bat_crop.shape[1]*10))
+#     return bat_crop
+    
 def crop_bat(img, box):
-    y1 = int((box[0][0]) * 0.975)
-    x1 = int((box[0][1]) * 0.975)
-    y2 = int((box[2][0]) * 1.025)
-    x2 = int((box[2][1]) * 1.025)
-    bat_crop = img[x1: x2, y1: y2]
+    x1, y1 = int(box[0][1]), int(box[0][0])
+    x2, y2 = int(box[1][1]), int(box[1][0]) 
+    x3, y3 = int(box[2][1]), int(box[2][0])
+    x4, y4 = int(box[3][1]), int(box[3][0])
+
+    top_left_x = min([x1,x2,x3,x4])
+    top_left_y = min([y1,y2,y3,y4])
+    bot_right_x = max([x1,x2,x3,x4])
+    bot_right_y = max([y1,y2,y3,y4])
+
+    bat_crop = img[top_left_x: bot_right_x+1, top_left_y: bot_right_y+1]
 
     print(box)
     print(x1, y1, x2, y2)
