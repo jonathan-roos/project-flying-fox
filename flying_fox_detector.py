@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 import keyboard
-from functions import augment, chop_img, find_bats
+from functions import augment, chop_img, find_bats, label_bats
 
 img_nums = ["0265", "0794", "0217"]
 img_num = img_nums[1]
@@ -12,26 +12,14 @@ allImgs = chop_img(img, 3)
 
 # For each image, use cv.findcontours on threshed img and cv.drawcontours on original image
 allImgs, totalBats, cropped_bats = find_bats(allImgs)
-
-# Save cropped bats to file
-for i in range(20):
-    bat = cropped_bats[100+i][0]
-    cv.imshow("cropped bat {}".format(i), bat)
-    path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\bat\bat{}.png".format(i)
-
-    if keyboard.is_pressed('y'):
-        path = path
-    if keyboard.is_pressed('n'):
-        path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\!bat\bat{}.png".format(i)
-
-    cv.waitKey(0)
-    cv.imwrite(path, bat)
     
 # Concatonate the marked images back together
 img_row_1 = cv.hconcat([allImgs[0][0],allImgs[1][0],allImgs[2][0]])
 img_row_2 = cv.hconcat([allImgs[3][0],allImgs[4][0],allImgs[5][0]])
 img_row_3 = cv.hconcat([allImgs[6][0],allImgs[7][0],allImgs[8][0]])
 img_concat = cv.resize(cv.vconcat([img_row_1, img_row_2, img_row_3]), (960, 768))
+
+label_bats(cropped_bats)
 
 text = "Bats detected: {}".format(totalBats)
 cv.putText(img_concat, text, (350, 750), cv.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 2)

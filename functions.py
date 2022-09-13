@@ -1,5 +1,6 @@
 import cv2 as cv
 import numpy as np
+import keyboard
 
 
 def chop_img(img, step):
@@ -34,7 +35,7 @@ def crop_bat(img, box):
     x3, y3 = int(box[2][1]), int(box[2][0])
     x4, y4 = int(box[3][1]), int(box[3][0])
 
-# Find distance from cx to top_left_x and cy to top_left_y to determine how many pixels the border around the cropped image should be
+    # Find distance from cx to top_left_x and cy to top_left_y to determine how many pixels the border around the cropped image should be
     top_left_x = min([x1,x2,x3,x4])
     top_left_y = min([y1,y2,y3,y4])
     bot_right_x = max([x1,x2,x3,x4])
@@ -42,10 +43,6 @@ def crop_bat(img, box):
 
     bat_crop = img[top_left_x-10: bot_right_x+11, top_left_y-10: bot_right_y+11]
 
-    print(box)
-    print(x1, y1, x2, y2)
-    print(bat_crop.shape)
-    # bat_crop = cv.resize(bat_crop, (bat_crop.shape[0]*10, bat_crop.shape[1]*10))
     return bat_crop
     
 def find_bats(allImgs):
@@ -72,7 +69,7 @@ def find_bats(allImgs):
                 cropped_bat = crop_bat(img[0], box)
                 cropped_bats.append((cropped_bat, bat_cords))
 
-                # cv.drawContours(img[0], [box], 0, (0, 0, 255), 1)  # Draw bat contours on img original
+                cv.drawContours(img[0], [box], 0, (0, 0, 255), 1)  # Draw bat contours on img original
 
                 # cv.imshow("img original", img[0])
 
@@ -83,3 +80,18 @@ def find_bats(allImgs):
         
     return allImgs, totalBats, cropped_bats
 
+def label_bats(cropped_bats):
+    # Save cropped bats to file
+    for i in range(20):
+        bat = cropped_bats[100+i][0]
+        cv.imshow("cropped bat {}".format(i), bat)
+        path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\bat\bat{}.png".format(i)
+
+        if keyboard.is_pressed('y'):
+            path = path
+        if keyboard.is_pressed('n'):
+            path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\!bat\bat{}.png".format(i)
+
+        cv.waitKey(0)
+        cv.imwrite(path, bat)
+        cv.destroyAllWindows()
