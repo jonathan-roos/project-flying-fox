@@ -40,10 +40,11 @@ def crop_bat(img, box):
     top_left_y = min([y1,y2,y3,y4])
     bot_right_x = max([x1,x2,x3,x4])
     bot_right_y = max([y1,y2,y3,y4])
-
+    
     bat_crop = img[top_left_x-10: bot_right_x+11, top_left_y-10: bot_right_y+11]
 
     return bat_crop
+
     
 def find_bats(allImgs):
     totalBats = 0
@@ -67,8 +68,7 @@ def find_bats(allImgs):
                 bats.append(bat_cords)
                 # crop bat from image
                 cropped_bat = crop_bat(img[0], box)
-                cropped_bats.append((cropped_bat, bat_cords))
-
+                cropped_bats.append((cropped_bat, bat_cords, box))
                 cv.drawContours(img[0], [box], 0, (0, 0, 255), 1)  # Draw bat contours on img original
 
                 # cv.imshow("img original", img[0])
@@ -80,18 +80,24 @@ def find_bats(allImgs):
         
     return allImgs, totalBats, cropped_bats
 
-def label_bats(cropped_bats):
+def label_bats(cropped_bats): 
     # Save cropped bats to file
-    for i in range(20):
-        bat = cropped_bats[100+i][0]
+    # for i in range(len(cropped_bats)):
+    for i in range(len(cropped_bats)):
+
+
+        print(cropped_bats[i][2])
+        bat = cropped_bats[i][0]
+        
         cv.imshow("cropped bat {}".format(i), bat)
-        path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\bat\bat{}.png".format(i)
+        cv.waitKey(0)
 
         if keyboard.is_pressed('y'):
-            path = path
+            path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\bat\bat{}.png".format(i)
+            cv.imwrite(path, bat)
+
         if keyboard.is_pressed('n'):
             path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\!bat\bat{}.png".format(i)
+            cv.imwrite(path, bat)
 
-        cv.waitKey(0)
-        cv.imwrite(path, bat)
         cv.destroyAllWindows()
