@@ -29,7 +29,7 @@ def augment(img):
     imgDilation = cv.dilate(imgThresh, kernel, iterations=1)  # apply dilation to amplify threshold result
     return imgDilation
     
-def crop_bat(img, box):
+def crop_bat(img, box, index):
     x1, y1 = int(box[0][1]), int(box[0][0])
     x2, y2 = int(box[1][1]), int(box[1][0]) 
     x3, y3 = int(box[2][1]), int(box[2][0])
@@ -42,6 +42,8 @@ def crop_bat(img, box):
     bot_right_y = max([y1,y2,y3,y4])
     
     bat_crop = img[top_left_x-10: bot_right_x+11, top_left_y-10: bot_right_y+11]
+
+    label_bat(bat_crop, img, box, index)
 
     return bat_crop
 
@@ -56,6 +58,7 @@ def find_bats(allImgs):
     for img in allImgs:
         blobs = cv.findContours(img[1], cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)[-2]  # Find bats using cv.findContours
         # Process the blobs
+        i =0
         for blob in blobs:
             if batDepthMin < cv.contourArea(blob) < batDepthMax:  # Only process blobs with a min / max size
                 rect = cv.minAreaRect(blob)
@@ -67,37 +70,61 @@ def find_bats(allImgs):
                 bat_cords = (cx, cy)
                 bats.append(bat_cords)
                 # crop bat from image
-                cropped_bat = crop_bat(img[0], box)
+                cropped_bat = crop_bat(img[0], box, i)
                 cropped_bats.append((cropped_bat, bat_cords, box))
-                cv.drawContours(img[0], [box], 0, (0, 0, 255), 1)  # Draw bat contours on img original
+                # cv.drawContours(img[0], [box], 0, (0, 0, 255), 1)  # Draw bat contours on img original
 
                 # cv.imshow("img original", img[0])
 
                 # cv.imshow("cropped bat", cropped_bat)
                 # cv.waitKey(0)
+                i+=1
 
     totalBats += len(bats)
         
     return allImgs, totalBats, cropped_bats
 
-def label_bats(cropped_bats): 
-    # Save cropped bats to file
-    # for i in range(len(cropped_bats)):
-    for i in range(len(cropped_bats)):
+# def label_bats(cropped_bats): 
+#     # Save cropped bats to file
+#     # for i in range(len(cropped_bats)):
+#     for i in range(len(cropped_bats)):
 
 
-        print(cropped_bats[i][2])
-        bat = cropped_bats[i][0]
+#         print(cropped_bats[i][2])
+#         bat = cropped_bats[i][0]
         
-        cv.imshow("cropped bat {}".format(i), bat)
-        cv.waitKey(0)
+#         cv.imshow("cropped bat {}".format(i), bat)
+#         cv.waitKey(0)
 
-        if keyboard.is_pressed('y'):
-            path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\bat\bat{}.png".format(i)
-            cv.imwrite(path, bat)
+#         if keyboard.is_pressed('y'):
+#             path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\bat\bat{}.png".format(i)
+#             cv.imwrite(path, bat)
 
-        if keyboard.is_pressed('n'):
-            path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\!bat\bat{}.png".format(i)
-            cv.imwrite(path, bat)
+#         if keyboard.is_pressed('n'):
+#             path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\!bat\bat{}.png".format(i)
+#             cv.imwrite(path, bat)
 
-        cv.destroyAllWindows()
+#         cv.destroyAllWindows()
+
+
+def label_bat(bat_crop, img, box, i):
+    print(i)
+    cv.imshow("cropped_bat", bat_crop)
+    img_dup = img.copy()
+    cv.drawContours(img_dup, [box], 0, (0, 0, 255), 1)  # Draw bat contours on img original
+    cv.imshow("context", img_dup)
+    
+    cv.waitKey(0)
+    
+    if keyboard.is_pressed('y'):
+        print("y was pressed")
+        path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\bat\bat{}.png".format(i)
+        cv.imwrite(path, bat_crop)
+
+    if keyboard.is_pressed('n'):
+        print("n was pressed")
+        path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\!bat\bat{}.png".format(i)
+        cv.imwrite(path, bat_crop)
+    
+    
+    cv.destroyAllWindows()

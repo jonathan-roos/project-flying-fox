@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 import keyboard
-from functions import augment, chop_img, find_bats, label_bats
+from functions import  chop_img, find_bats   
 
 img_nums = ["0265", "0794", "0217"]
 img_num = img_nums[2]
@@ -19,7 +19,7 @@ img_row_2 = cv.hconcat([allImgs[3][0],allImgs[4][0],allImgs[5][0]])
 img_row_3 = cv.hconcat([allImgs[6][0],allImgs[7][0],allImgs[8][0]])
 img_concat = cv.resize(cv.vconcat([img_row_1, img_row_2, img_row_3]), (960, 768))
 
-label_bats(cropped_bats)
+# label_bats(cropped_bats)
 
 text = "Bats detected: {}".format(totalBats)
 cv.putText(img_concat, text, (350, 750), cv.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 2)
