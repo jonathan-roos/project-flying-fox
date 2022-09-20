@@ -70,45 +70,17 @@ def find_bats(allImgs):
                 bat_cords = (cx, cy)
                 bats.append(bat_cords)
                 # crop bat from image
+                
                 cropped_bat = crop_bat(img[0], box, i)
                 cropped_bats.append((cropped_bat, bat_cords, box))
-                # cv.drawContours(img[0], [box], 0, (0, 0, 255), 1)  # Draw bat contours on img original
-
-                # cv.imshow("img original", img[0])
-
-                # cv.imshow("cropped bat", cropped_bat)
-                # cv.waitKey(0)
                 i+=1
 
     totalBats += len(bats)
         
     return allImgs, totalBats, cropped_bats
 
-# def label_bats(cropped_bats): 
-#     # Save cropped bats to file
-#     # for i in range(len(cropped_bats)):
-#     for i in range(len(cropped_bats)):
-
-
-#         print(cropped_bats[i][2])
-#         bat = cropped_bats[i][0]
-        
-#         cv.imshow("cropped bat {}".format(i), bat)
-#         cv.waitKey(0)
-
-#         if keyboard.is_pressed('y'):
-#             path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\bat\bat{}.png".format(i)
-#             cv.imwrite(path, bat)
-
-#         if keyboard.is_pressed('n'):
-#             path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\!bat\bat{}.png".format(i)
-#             cv.imwrite(path, bat)
-
-#         cv.destroyAllWindows()
-
-
 def label_bat(bat_crop, img, box, i):
-    print(i)
+    num = i + 145
     cv.imshow("cropped_bat", bat_crop)
     img_dup = img.copy()
     cv.drawContours(img_dup, [box], 0, (0, 0, 255), 1)  # Draw bat contours on img original
@@ -118,12 +90,12 @@ def label_bat(bat_crop, img, box, i):
     
     if keyboard.is_pressed('y'):
         print("y was pressed")
-        path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\bat\bat{}.png".format(i)
+        path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\Training Data\bat\bat{}.png".format(num)
         cv.imwrite(path, bat_crop)
 
     if keyboard.is_pressed('n'):
         print("n was pressed")
-        path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\croppedBats\!bat\bat{}.png".format(i)
+        path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\Training Data\!bat\bat{}.png".format(num)
         cv.imwrite(path, bat_crop)
     
     
