@@ -43,7 +43,7 @@ def crop_bat(img, box, index):
     
     bat_crop = img[top_left_x-10: bot_right_x+11, top_left_y-10: bot_right_y+11]
 
-    label_bat(bat_crop, img, box, index)
+    # label_bat(bat_crop, img, box, index)
 
     return bat_crop
 
