@@ -2,7 +2,6 @@ import cv2 as cv
 import numpy as np
 import keyboard
 
-
 def chop_img(img, step):
     allImgs = []
     width = 640
@@ -40,10 +39,24 @@ def crop_bat(img, box, index):
     top_left_y = min([y1,y2,y3,y4])
     bot_right_x = max([x1,x2,x3,x4])
     bot_right_y = max([y1,y2,y3,y4])
-    
-    bat_crop = img[top_left_x-10: bot_right_x+11, top_left_y-10: bot_right_y+11]
 
-    # label_bat(bat_crop, img, box, index)
+    crop_x1 = top_left_x - 10 
+    if crop_x1 <= 0:
+        crop_x1 = 1 
+    
+    crop_x2 = bot_right_x+11
+    if crop_x2 > 512:
+        crop_x2 = 512 
+
+    crop_y1 = top_left_y-10
+    if crop_y1 <= 0:
+        crop_y1 = 1
+
+    crop_y2 = bot_right_y+11
+    if crop_y2 > 640:
+        crop_y2 = 640 
+    
+    bat_crop = img[crop_x1: crop_x2, crop_y1: crop_y2]
 
     return bat_crop
 
