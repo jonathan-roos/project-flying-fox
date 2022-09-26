@@ -7,7 +7,7 @@ import pathlib
 
 
 img_nums = ["0115", "0690", "0217"]
-img_num = img_nums[0]
+img_num = img_nums[2]
 img = cv.imread(r"C:\Users\jonathan\Evolve Technology\Evolve Technologies Team Site - Client Info\Ecosure\4. Projects\Project Flying Fox - Sample Data\PR5902 Hillview Station Apr 2022\Raw Data M2EA 270422\Ortho Runs\40M\Thermal\DJI_{}_T.JPG".format(img_num))
 print(img.shape)  
 
@@ -17,22 +17,23 @@ allImgs = chop_img(img, 3)
 temp = pathlib.PosixPath
 pathlib.PosixPath = pathlib.WindowsPath
 learn = load_learner("model.pkl")
-bat_count = 0
-# not_bat_count = 0
 
 # For each image, use cv.findcontours on threshed img and cv.drawcontours on original image
-allImgs, totalBats, cropped_bats = find_bats(allImgs, learn)
+allImgsBefore, allImgsAfter, totalBats = find_bats(allImgs, learn)
 
-# for bat in cropped_bats:
-#     img = bat[0]
-#     label, _, probs = learn.predict(img)
-#     p=f"{probs[1]:.4f}"
-#     if label == 'bat' and p>'0.5':
-#         bat_count += 1
-    # elif label == "!bat":
-    #     not_bat_count += 1
+img_row_before_1 = cv.hconcat([allImgsBefore[0],allImgsBefore[1],allImgsBefore[2]])
+img_row_before_2 = cv.hconcat([allImgsBefore[3],allImgsBefore[4],allImgsBefore[5]])
+img_row_before_3 = cv.hconcat([allImgsBefore[6],allImgsBefore[7],allImgsBefore[8]])
+img_concat_before = cv.resize(cv.vconcat([img_row_before_1, img_row_before_2, img_row_before_3]), (960, 768))
 
-print(f"Number of bats: {bat_count}")
-# print(f"Number of !bats = {not_bat_count}")
+img_row_after_1 = cv.hconcat([allImgsAfter[0],allImgsAfter[1],allImgsAfter[2]])
+img_row_after_2 = cv.hconcat([allImgsAfter[3],allImgsAfter[4],allImgsAfter[5]])
+img_row_after_3 = cv.hconcat([allImgsAfter[6],allImgsAfter[7],allImgsAfter[8]])
+img_concat_after = cv.resize(cv.vconcat([img_row_after_1, img_row_after_2, img_row_after_3]), (960, 768))
+cv.imshow("Before NN", img_concat_before)
+cv.imshow("After NN", img_concat_after)
+cv.waitKey(0)
+
+print(f"Number of bats: {totalBats}")
 
                
