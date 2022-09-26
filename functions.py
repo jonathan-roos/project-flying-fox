@@ -28,7 +28,7 @@ def augment(img):
     imgDilation = cv.dilate(imgThresh, kernel, iterations=1)  # apply dilation to amplify threshold result
     return imgDilation
     
-def crop_bat(img, box, index):
+def crop_bat(img, box):
     x1, y1 = int(box[0][1]), int(box[0][0])
     x2, y2 = int(box[1][1]), int(box[1][0]) 
     x3, y3 = int(box[2][1]), int(box[2][0])
@@ -71,23 +71,20 @@ def find_bats(allImgs):
     for img in allImgs:
         blobs = cv.findContours(img[1], cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)[-2]  # Find bats using cv.findContours
         # Process the blobs
-        i =0
         for blob in blobs:
             if batDepthMin < cv.contourArea(blob) < batDepthMax:  # Only process blobs with a min / max size
                 rect = cv.minAreaRect(blob)
                 box = cv.boxPoints(rect)
                 box = np.int0(box)
                 M = cv.moments(blob)
-                cx = int(M["m10"] / M["m00"])
+                cx = int(M["m10"] / M["m00"]) # Could use this to determine if the same bat is in more than one image
                 cy = int(M["m01"] / M["m00"])
                 bat_cords = (cx, cy)
                 bats.append(bat_cords)
                 # crop bat from image
-                
-                cropped_bat = crop_bat(img[0], box, i)
+                cropped_bat = crop_bat(img[0], box)
                 cropped_bats.append((cropped_bat, bat_cords, box))
-                i+=1
-
+                
     totalBats += len(bats)
         
     return allImgs, totalBats, cropped_bats
