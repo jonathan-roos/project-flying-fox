@@ -92,24 +92,4 @@ def find_bats(allImgs):
         
     return allImgs, totalBats, cropped_bats
 
-def label_bat(bat_crop, img, box, i):
-    num = i + 145
-    cv.imshow("cropped_bat", bat_crop)
-    img_dup = img.copy()
-    cv.drawContours(img_dup, [box], 0, (0, 0, 255), 1)  # Draw bat contours on img original
-    cv.imshow("context", img_dup)
-    
-    cv.waitKey(0)
-    
-    if keyboard.is_pressed('y'):
-        print("y was pressed")
-        path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\Training Data\bat\bat{}.png".format(num)
-        cv.imwrite(path, bat_crop)
 
-    if keyboard.is_pressed('n'):
-        print("n was pressed")
-        path = r"C:\Users\jonathan\OneDrive - Evolve Technology\Documents\Project Flying Fox\Training Data\!bat\bat{}.png".format(num)
-        cv.imwrite(path, bat_crop)
-    
-    
-    cv.destroyAllWindows()
