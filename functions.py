@@ -1,6 +1,6 @@
 import cv2 as cv
 import numpy as np
-import keyboard
+from fastai.vision.all import *
 
 def chop_img(img, step):
     allImgs = []
@@ -61,7 +61,7 @@ def crop_bat(img, box):
     return bat_crop
 
     
-def find_bats(allImgs):
+def find_bats(allImgs, learn):
     totalBats = 0
     batDepthMin = 50
     batDepthMax = 400
@@ -70,20 +70,35 @@ def find_bats(allImgs):
 
     for img in allImgs:
         blobs = cv.findContours(img[1], cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)[-2]  # Find bats using cv.findContours
+        before = img[0].copy()
+        after = img[0].copy()
         # Process the blobs
         for blob in blobs:
-            if batDepthMin < cv.contourArea(blob) < batDepthMax:  # Only process blobs with a min / max size
+            if batDepthMin < cv.contourArea(blob) < batDepthMax:  # Only process blobs with a min / max size 
                 rect = cv.minAreaRect(blob)
                 box = cv.boxPoints(rect)
                 box = np.int0(box)
                 M = cv.moments(blob)
                 cx = int(M["m10"] / M["m00"]) # Could use this to determine if the same bat is in more than one image
                 cy = int(M["m01"] / M["m00"])
+                cv.drawContours(before, [box], 0, (0,0,255),1)
                 bat_cords = (cx, cy)
                 bats.append(bat_cords)
                 # crop bat from image
                 cropped_bat = crop_bat(img[0], box)
+                label, _, probs = learn.predict(cropped_bat)
+                p=f"{probs[1]:.4f}"
+                if label == 'bat' and p > '0.5':
+                    cv.drawContours(after, [box], 0, (0,0,255),1)
+                    print("Draw contour")
+
+                # learn.predict
+                # if !not bat remove from blobs
+                # draw contours again of after img
                 cropped_bats.append((cropped_bat, bat_cords, box))
+        cv.imshow("before", before)
+        cv.imshow("after", after)
+        cv.waitKey(0)
                 
     totalBats += len(bats)
         
