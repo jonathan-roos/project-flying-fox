@@ -6,10 +6,9 @@ from fastai.vision.all import *
 import pathlib
 
 
-img_nums = ["0115", "0690", "0217"]
+img_nums = ("0115", "0690", "0217")
 img_num = img_nums[2]
 img = cv.imread(r"C:\Users\jonathan\Evolve Technology\Evolve Technologies Team Site - Client Info\Ecosure\4. Projects\Project Flying Fox - Sample Data\PR5902 Hillview Station Apr 2022\Raw Data M2EA 270422\Ortho Runs\40M\Thermal\DJI_{}_T.JPG".format(img_num))
-print(img.shape)  
 
 # list of tuples that store each cropped image in its original format and threshed format (original, threshed)
 allImgs = chop_img(img, 3)
