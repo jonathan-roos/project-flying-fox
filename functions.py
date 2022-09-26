@@ -73,8 +73,8 @@ def find_bats(allImgs, learn):
                 cv.drawContours(before, [box], 0, (0,0,255),1)
                 cropped_bat = crop_bat(img[0], box)
                 label, _, probs = learn.predict(cropped_bat)
-                p=f"{probs[0]:.4f}"
-                if label == '!bat' and p > '0.5':
+                p_not_bat=f"{probs[0]:.4f}"
+                if label == '!bat' and p_not_bat > '0.5':
                     pass
                 else:
                     cv.drawContours(after, [box], 0, (0,0,255),1)
