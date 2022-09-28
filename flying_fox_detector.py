@@ -1,11 +1,9 @@
-from timeit import default_timer as timer
 import cv2 as cv
 from functions import  chop_img, find_bats
 from fastai.vision.all import *
 import pathlib
-import timm 
+import time
 
-start = timer()
 img_nums = ("0800", "0690", "0217")
 img_num = img_nums[2]
 img = cv.imread(r"C:\Users\jonathan\Evolve Technology\Evolve Technologies Team Site - Client Info\Ecosure\4. Projects\Project Flying Fox - Sample Data\PR5902 Hillview Station Apr 2022\Raw Data M2EA 270422\Ortho Runs\40M\Thermal\DJI_{}_T.JPG".format(img_num))
@@ -19,18 +17,35 @@ cropped_bats = find_bats(allImgs)
 
 temp = pathlib.PosixPath
 pathlib.PosixPath = pathlib.WindowsPath
-learn = load_learner("model_convnext_small.pkl")
+learn = load_learner("model.pkl")
 
-i = 0
-while i < len(cropped_bats):
-    label, _, probs = learn.predict(cropped_bats[i])
+# def multiprocessing_func():
+#     print('Starting to sleep')
+#     time.sleep(1)
+#     print('done sleeping')
+
+# process_list = []
+
+# if __name__ == '__main__':
+#     tic = time.time()
+#     for i in range(10):
+#         p = multiprocessing.Process(target= multiprocessing_func)
+#         p.start()
+#         process_list.append(p)
+
+#     for process in process_list:
+#         process.join()
+
+#     toc = time.time()
+
+#     print('Done in {:.4f} seconds'.format(toc-tic))
+
+for bat in cropped_bats:
+    label, _, probs = learn.predict(bat)
     p=f"{probs[0]:.4f}"
     if label == '!bat' and p > '0.5':
         pass
     else:
         totalBats += 1
-    i += 1
 
 
-print(timer()-start)
-print(f"Number of bats: {totalBats}")
