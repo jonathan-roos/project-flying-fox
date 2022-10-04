@@ -52,21 +52,32 @@ def crop_bat(img, box):
     bat_crop = img[crop_x1: crop_x2, crop_y1: crop_y2]
 
     return bat_crop
-    
-def find_bats(allImgs):
-    batDepthMin, batDepthMax = 50, 400
-    cropped_bats = []
 
-    for img in allImgs:
-        blobs = cv.findContours(img[1], cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)[-2]
-        # Process the blobs
-        for blob in blobs:
-            if batDepthMin < cv.contourArea(blob) < batDepthMax:  # Only process blobs with a min / max size 
-                rect = cv.minAreaRect(blob)
-                box = cv.boxPoints(rect)
-                box = np.int0(box)
-                cropped_bat = crop_bat(img[0], box)
-                cropped_bats.append(cropped_bat)
-                        
+def get_box(blob):
+    rect = cv.minAreaRect(blob)
+    box = cv.boxPoints(rect)
+    box = np.int0(box)
+
+def find_bats(img):
+    batDepthMin, batDepthMax = 50, 400
+    blobs = cv.findContours(img[1], cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)[-2]
+    cropped_bats = [crop_bat(img[0], np.int0(cv.boxPoints(cv.minAreaRect(blob)))) for blob in blobs if batDepthMin < cv.contourArea(blob) < batDepthMax]
     return cropped_bats
+
+# def find_bats(allImgs):
+#     batDepthMin, batDepthMax = 50, 400
+#     cropped_bats = []
+
+#     for img in allImgs:
+#         blobs = cv.findContours(img[1], cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)[-2]
+#         # Process the blobs
+#         for blob in blobs:
+#             if batDepthMin < cv.contourArea(blob) < batDepthMax:  # Only process blobs with a min / max size 
+#                 rect = cv.minAreaRect(blob)
+#                 box = cv.boxPoints(rect)
+#                 box = np.int0(box)
+#                 cropped_bat = crop_bat(img[0], box)
+#                 cropped_bats.append(cropped_bat)
+                        
+#     return cropped_bats
 

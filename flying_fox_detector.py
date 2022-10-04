@@ -14,30 +14,43 @@ totalBats = 0
 allImgs = chop_img(img, 3)
 
 # For each image, use cv.findcontours on threshed img and cv.drawcontours on original image
-cropped_bats = find_bats(allImgs)
+# cropped_bats = find_bats(allImgs)
+cropped_bats = []
+for img in allImgs:
+    cropped_bats.extend(find_bats(img))
+
 
 temp = pathlib.PosixPath
 pathlib.PosixPath = pathlib.WindowsPath
 learn = load_learner("model.pkl")
-print(f"Time before Detecting bats took {time.time() - start} seconds")
+print(f"Time before Detecting bats took {time.time() - start:.2f} seconds")
+print("Detecting Bats...")
 
 start1 = time.time()
+
+# def predict(bat):
+#     labels = ("!bat", "bat")
+#     with learn.no_bar(), learn.no_logging():
+#         _, _, probs = learn.predict(bat)
+#     return (tuple(zip(labels, map(lambda x: f"{x:.4f}", probs))))
 def predict(bat):
-    labels = ("!bat", "bat")
     with learn.no_bar(), learn.no_logging():
         _, _, probs = learn.predict(bat)
-    return (tuple(zip(labels, map(lambda x: f"{x:.4f}", probs))))
+    return (tuple(map(lambda x: f"{x:.4f}", probs)))
 
 results = [predict(bat) for bat in cropped_bats]
 
-# results = map(predict, cropped_bats)
-print(results)
-# for bat in cropped_bats:
-#     label, _, probs = learn.predict(bat)
-#     p=f"{probs[0]:.4f}"
-#     if label == '!bat' and p > '0.5':
-#         pass
-#     else:
+# def filter_bats(results):
+#     if results[0][1] < '0.5' and results[1][1] > '0.75':
+#         return results
+
+filtered_results = filter(lambda x: (x[0] < '0.5' and x[1] > '0.75'), results)
+
+# for result in results:
+#     if result[0][1] < '0.5' and result[1][1] > '0.75':
 #         totalBats += 1
-print(f"Detecting Bats took: {time.time()-start1} seconds")
+
+print(len(list(filtered_results)))
+print(f"Detecting Bats took: {time.time()-start1:.2f} seconds")
+
 
