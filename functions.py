@@ -10,7 +10,8 @@ def chop_img(img, step):
             # crop the image into step*rows and step*columns
             imgCrop = img[int(0 + height / step * i): int(height / step + height / step * i),
                       int(0 + width / step * j): int(width / step + width / step * j)]
-            imgResize = cv.resize(imgCrop, (640, 512))  # Resize image
+            imgGray = cv.cvtColor(imgCrop, cv.COLOR_BGR2GRAY)
+            imgResize = cv.resize(imgGray, (640, 512))  # Resize image
             imgAug = augment(imgResize)
             allImgs.append((imgResize, imgAug))
             j += 1
@@ -19,8 +20,8 @@ def chop_img(img, step):
 
 def augment(img):
     kernel = np.ones((5, 5), np.uint8)
-    imgGray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)  # convert to grayscale
-    imgBlur = cv.GaussianBlur(imgGray, (5, 5), 0)  # apply gaussian blur
+    # imgGray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)  # convert to grayscale
+    imgBlur = cv.GaussianBlur(img, (5, 5), 0)  # apply gaussian blur
     imgThresh = cv.adaptiveThreshold(  # apply adaptive threshold
     imgBlur, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV, 7, 5)
     imgDilation = cv.dilate(imgThresh, kernel, iterations=1)  # apply dilation to amplify threshold result
@@ -47,9 +48,8 @@ def crop_bat(img, box):
     crop_y2 = bot_right_y+11
     if crop_y2 > 640:
         crop_y2 = 640 
-    
-    bat_crop = img[crop_x1: crop_x2, crop_y1: crop_y2]
 
+    bat_crop = img[crop_x1: crop_x2, crop_y1: crop_y2]
     return bat_crop
 
     
@@ -72,11 +72,11 @@ def find_bats(allImgs, learn):
                 box = np.int0(box)
                 cv.drawContours(before, [box], 0, (0,0,255),1)
                 cropped_bat = crop_bat(img[0], box)
-                label, _, probs = learn.predict(cropped_bat)
+                with learn.no_bar(), learn.no_logging():
+                    label, _, probs = learn.predict(cropped_bat)
                 p_not_bat=f"{probs[0]:.4f}"
-                if label == '!bat' and p_not_bat > '0.5':
-                    pass
-                else:
+                p_bat=f"{probs[1]:.4f}"
+                if p_not_bat < '0.9' and p_bat > '0.5':
                     cv.drawContours(after, [box], 0, (0,0,255),1)
                     totalBats += 1
         allImgBefore.append(before)
