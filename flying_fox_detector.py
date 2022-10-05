@@ -5,7 +5,7 @@ import pathlib
 import time
 
 start = time.time()
-img_nums = ("0800", "0690", "0217")
+img_nums = ("0043", "0690", "0217")
 img_num = img_nums[0]
 img = cv.imread(r"C:\Users\jonathan\Evolve Technology\Evolve Technologies Team Site - Client Info\Ecosure\4. Projects\Project Flying Fox - Sample Data\PR5902 Hillview Station Apr 2022\Raw Data M2EA 270422\Ortho Runs\40M\Thermal\DJI_{}_T.JPG".format(img_num))
 totalBats = 0
@@ -19,7 +19,7 @@ for img in allImgs:
 
 temp = pathlib.PosixPath
 pathlib.PosixPath = pathlib.WindowsPath
-learn = load_learner("model.pkl")
+learn = load_learner("model_densenet_zeros.pkl")
 print(f"Time before Detecting bats took {time.time() - start:.2f} seconds")
 print("Detecting Bats...")
 
