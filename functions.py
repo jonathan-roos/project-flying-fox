@@ -1,7 +1,5 @@
 import cv2 as cv
 import numpy as np
-import timm
-from fastai.vision.all import *
 
 def chop_img(img, step):
     allImgs = []
