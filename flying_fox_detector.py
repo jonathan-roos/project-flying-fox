@@ -24,7 +24,7 @@ pathlib.PosixPath = pathlib.WindowsPath
 # device = torch.device("cuda" if use_cuda else "cpu")
 # default_device(use_cuda=use_cuda)
 
-learn = load_learner("model.pkl", cpu=True) # Change to cpu=False if using a GPU
+learn = load_learner("model_densenet_zeros.pkl", cpu=True) # Change to cpu=False if using a GPU
 print(f"Time before Detecting bats took {time.time() - start:.2f} seconds")
 print("Detecting Bats...")
 
