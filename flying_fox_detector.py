@@ -1,30 +1,37 @@
 import cv2 as cv
-import numpy as np
-from functions import augment, chop_img, find_bats
+from functions import  chop_img, find_bats
+from fastai.vision.all import *
+import pathlib
+import torch
+import torch.nn 
+import time
 
-img_num = "0091"
-img = cv.imread(r"C:\Users\jonathan\Evolve Technology\Evolve Technologies Team Site - Client Info\Ecosure\4. Projects\Project Flying Fox - Sample Data\PR5902 Hillview Station Apr 2022\Raw Data M2EA 270422\Ortho Runs\40M\Thermal\DJI_{}_T.JPG".format(img_num))
-print(img.shape)
+start = time.time()
+img = cv.imread(r"DJI_0017_T.JPG")
+
 # list of tuples that store each cropped image in its original format and threshed format (original, threshed)
 allImgs = chop_img(img, 3)
 
-# For each image, use cv.findcontours on threshed img and cv.drawcontours on original image
-allImgs, totalBats, bat_cords = find_bats(allImgs)
+cropped_bats = []
+for img in allImgs:
+    cropped_bats.extend(find_bats(img))
 
-print(bat_cords[1][1])
+temp = pathlib.PosixPath
+pathlib.PosixPath = pathlib.WindowsPath
 
-# Concatonate the marked images back together
-img_row_1 = cv.hconcat([allImgs[0][0],allImgs[1][0],allImgs[2][0]])
-img_row_2 = cv.hconcat([allImgs[3][0],allImgs[4][0],allImgs[5][0]])
-img_row_3 = cv.hconcat([allImgs[6][0],allImgs[7][0],allImgs[8][0]])
+start = time.time()
+learn = load_learner("model_densenet_zeros.pkl", cpu=True) # Change to cpu=False if using a GPU
 
+# getting batch predictions using learn.get_preds() instead of using learn.predict().
+# results in much quicker prediction times
+if __name__ == '__main__':
+    test_dl = learn.dls.test_dl(cropped_bats)
+    preds = learn.get_preds(dl=test_dl)
 
-# Resize img
-img_concat = cv.resize(cv.vconcat([img_row_1, img_row_2, img_row_3]), (960, 768))
+    results = [tuple([f"{pred[0]:.4f}",f"{pred[1]:.4f}"]) for pred in preds[0]]
 
-text = "Bats detected: {}".format(totalBats)
-cv.putText(img_concat, text, (350, 750), cv.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 2)
+    filtered_results = filter(lambda x: (x[0] < '0.5' and x[1] > '0.75'), results)
 
-print("Total number of bats = {}".format(totalBats))
-cv.imshow("img", img_concat)
-cv.waitKey(0)
+    print(len(list(filtered_results)))
+    print(f"Detecting Bats took: {time.time()-start:.2f} seconds")
+
